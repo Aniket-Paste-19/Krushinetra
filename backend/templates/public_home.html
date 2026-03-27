@@ -1,0 +1,318 @@
+{% extends 'base.html' %}
+{% block title %}कृषीनेत्र AI - सार्वजनिक मुख्यपृष्ठ{% endblock %}
+{% block content %}
+<section class="hero-shell mb-5">
+    <div class="row g-4 align-items-stretch">
+        <div class="col-lg-7">
+            <div class="hero-copy h-100">
+                <span class="hero-chip">AI पिक रोग शोध इंजिन</span>
+                <h1 class="display-5 fw-bold mt-3 mb-3">पानाचा फोटो अपलोड करा आणि काही सेकंदांत रोग, लक्षणे आणि उपचार मार्गदर्शन मिळवा.</h1>
+                <p class="lead text-secondary mb-4">
+                    कृषीनेत्र AI हे शेतकरी, कृषी सल्लागार, विद्यार्थी आणि FPO गटांसाठी तयार केलेले
+                    image-based crop disease search platform आहे. गेस्ट वापरकर्ते 5 मोफत डेमो शोध करू शकतात.
+                </p>
+                <div class="d-flex flex-wrap gap-3 mb-4">
+                    <a class="btn btn-success btn-lg" href="#guest-search">आत्ताच डेमो वापरा</a>
+                    <a class="btn btn-outline-dark btn-lg" href="{{ url_for('farmer.register_page') }}">नोंदणी करा</a>
+                </div>
+                <div class="row g-3">
+                    <div class="col-sm-4">
+                        <div class="hero-stat">
+                            <div class="label">मोफत गेस्ट शोध</div>
+                            <div class="value">{{ guest_search_limit }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="hero-stat">
+                            <div class="label">उर्वरित शोध</div>
+                            <div class="value">{{ guest_searches_remaining }}</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="hero-stat">
+                            <div class="label">AI डेमो स्थिती</div>
+                            <div class="value">{{ 'सक्रिय' if demo_ready else 'तयार होत आहे' }}</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div id="publicHeroCarousel" class="carousel slide hero-carousel h-100" data-bs-ride="carousel">
+                <div class="carousel-inner h-100">
+                    <div class="carousel-item active h-100">
+                        <div class="hero-slide h-100">
+                            <div class="eyebrow">AI Engine</div>
+                            <h2>डीप लर्निंग आधारित पान विश्लेषण</h2>
+                            <p>अपलोड केलेल्या पानाच्या फोटोतून रोग वर्ग, confidence score आणि उपचार सूचना मिळतात.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item h-100">
+                        <div class="hero-slide h-100">
+                            <div class="eyebrow">Who Can Use</div>
+                            <h2>शेतकरी, विद्यार्थी, कृषी सल्लागार, नर्सरी आणि FPO</h2>
+                            <p>फील्डमधील जलद निर्णयांसाठी किंवा प्रशिक्षणासाठी हा platform उपयोगी आहे.</p>
+                        </div>
+                    </div>
+                    <div class="carousel-item h-100">
+                        <div class="hero-slide h-100">
+                            <div class="eyebrow">How It Helps</div>
+                            <h2>लवकर निदान, योग्य उपचार, कमी वेळेचा अपव्यय</h2>
+                            <p>नोंदणीकृत वापरकर्त्यांना prediction history आणि पुढील वापरासाठी पूर्ण access मिळतो.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-indicators position-static mt-3 mb-0">
+                    <button type="button" data-bs-target="#publicHeroCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                    <button type="button" data-bs-target="#publicHeroCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                    <button type="button" data-bs-target="#publicHeroCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="row g-4 mb-5">
+    <div class="col-lg-4">
+        <div class="info-card h-100">
+            <h2>हे search engine कोण वापरू शकतात?</h2>
+            <ul class="mb-0">
+                <li>शेतकरी आणि शेतमजूर</li>
+                <li>कृषी महाविद्यालयातील विद्यार्थी</li>
+                <li>Agri input dealers आणि field advisors</li>
+                <li>FPO, NGO आणि extension teams</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="info-card h-100">
+            <h2>हे कसे मदत करते?</h2>
+            <ul class="mb-0">
+                <li>रोगाची शक्यता काही सेकंदांत दाखवते</li>
+                <li>लक्षणे आणि उपचार मार्गदर्शन देते</li>
+                <li>नोंदणीनंतर history आणि repeat usage मिळतो</li>
+                <li>कमी वेळेत field-level decision support मिळतो</li>
+            </ul>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="info-card h-100">
+            <h2>कसे वापरायचे?</h2>
+            <ol class="mb-0 ps-3">
+                <li>पानाचा स्पष्ट फोटो घ्या</li>
+                <li>खालील form मधून upload किंवा camera वापरा</li>
+                <li>AI result, symptoms आणि treatment पहा</li>
+                <li>5 डेमो शोधांनंतर नोंदणी करा</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<section id="guest-search" class="row g-4 align-items-start">
+    <div class="col-lg-6">
+        <div class="card shadow-sm public-search-card">
+            <div class="card-body p-4">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h2 class="h3 mb-1">गेस्ट डेमो तपासणी</h2>
+                        <p class="text-muted mb-0">नोंदणीशिवाय {{ guest_search_limit }} मोफत शोध. त्यानंतर खाते तयार करणे आवश्यक आहे.</p>
+                    </div>
+                    <span class="badge text-bg-dark">वापरले: {{ guest_searches_used }}/{{ guest_search_limit }}</span>
+                </div>
+
+                {% if not demo_ready %}
+                    <div class="alert alert-warning mb-3">AI मॉडेल सध्या उपलब्ध नाही. ट्रेनिंग पूर्ण झाल्यावर डेमो शोध सुरू होतील.</div>
+                {% elif guest_limit_reached %}
+                    <div class="alert alert-warning mb-3">
+                        तुमचे 5 मोफत गेस्ट शोध पूर्ण झाले आहेत. पुढे वापरण्यासाठी नोंदणी करा.
+                    </div>
+                {% else %}
+                    <div class="alert alert-success mb-3">तुमच्याकडे अजून {{ guest_searches_remaining }} मोफत डेमो शोध शिल्लक आहेत.</div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data" id="public-detection-form">
+                    <div class="mb-3">
+                        <label class="form-label">पीक प्रकार</label>
+                        <select class="form-select" name="plant_id" {% if not demo_ready or guest_limit_reached %}disabled{% endif %}>
+                            <option value="">मॉडेलवरून आपोआप ओळखा</option>
+                            {% for plant in plants %}
+                                <option value="{{ plant.PlantID }}">{{ plant.PlantName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <ul class="nav nav-pills nav-fill mb-3" id="public-capture-options" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="public-upload-tab" data-bs-toggle="pill" data-bs-target="#public-upload-pane" type="button" role="tab" aria-controls="public-upload-pane" aria-selected="true">फोटो अपलोड</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="public-camera-tab" data-bs-toggle="pill" data-bs-target="#public-camera-pane" type="button" role="tab" aria-controls="public-camera-pane" aria-selected="false">कॅमेरा</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mb-3">
+                        <div class="tab-pane fade show active" id="public-upload-pane" role="tabpanel" aria-labelledby="public-upload-tab">
+                            <label class="form-label">पानाचा फोटो</label>
+                            <input
+                                class="form-control"
+                                type="file"
+                                id="public-leaf-image-input"
+                                name="leaf_image"
+                                accept="image/*"
+                                capture="environment"
+                                {% if not demo_ready or guest_limit_reached %}disabled{% endif %}
+                            >
+                            <div class="form-text">मोबाइलवरून थेट camera किंवा gallery मधून image निवडा.</div>
+                        </div>
+                        <div class="tab-pane fade" id="public-camera-pane" role="tabpanel" aria-labelledby="public-camera-tab">
+                            <p class="text-muted small mb-2">Browser support असल्यास live camera preview वापरू शकता.</p>
+                            <div class="ratio ratio-4x3 rounded overflow-hidden bg-dark mb-3">
+                                <video id="public-camera-preview" class="w-100 h-100 object-fit-cover" autoplay playsinline muted></video>
+                            </div>
+                            <canvas id="public-camera-canvas" class="d-none"></canvas>
+                            <input type="hidden" name="captured_image_data" id="public-captured-image-data">
+                            <div class="d-flex gap-2 mb-3">
+                                <button class="btn btn-outline-success flex-fill" type="button" id="public-start-camera-btn" {% if not demo_ready or guest_limit_reached %}disabled{% endif %}>कॅमेरा सुरू करा</button>
+                                <button class="btn btn-success flex-fill" type="button" id="public-capture-photo-btn" disabled>फोटो घ्या</button>
+                            </div>
+                            <img id="public-captured-preview" class="img-fluid rounded border d-none" alt="कॅप्चर प्रिव्ह्यू">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success w-100 btn-lg" {% if not demo_ready or guest_limit_reached %}disabled{% endif %}>AI तपासणी सुरू करा</button>
+                </form>
+
+                {% if guest_limit_reached %}
+                    <div class="d-grid gap-2 mt-3">
+                        <a class="btn btn-dark" href="{{ url_for('farmer.register_page') }}">नोंदणी करा</a>
+                        <a class="btn btn-outline-secondary" href="{{ url_for('farmer.login_page') }}">आधीच खाते आहे? लॉगिन करा</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card shadow-sm public-result-card h-100">
+            <div class="card-body p-4">
+                <h2 class="h3 mb-3">AI Result Panel</h2>
+                {% if result %}
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">पीक</dt><dd class="col-sm-8">{{ result.plant_name }}</dd>
+                        <dt class="col-sm-4">रोग</dt><dd class="col-sm-8">{{ result.disease_name }}</dd>
+                        <dt class="col-sm-4">Confidence</dt><dd class="col-sm-8">{{ result.confidence_score }}%</dd>
+                        <dt class="col-sm-4">लक्षणे</dt><dd class="col-sm-8">{{ result.symptoms or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">उपचार</dt><dd class="col-sm-8">{{ result.treatment or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">पूरक औषध</dt><dd class="col-sm-8">{{ result.supplement or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">मॉडेल</dt><dd class="col-sm-8">{{ result.model_version }}</dd>
+                    </dl>
+                {% else %}
+                    <div class="result-placeholder">
+                        <h3 class="h5">गेस्ट डेमोमध्ये काय मिळेल?</h3>
+                        <p class="mb-3">तुम्ही फोटो upload केल्यानंतर AI इंजिन रोग ओळखून treatment guidance देईल.</p>
+                        <div class="placeholder-grid">
+                            <span>रोगाचे नाव</span>
+                            <span>Confidence Score</span>
+                            <span>Symptoms</span>
+                            <span>Treatment Advice</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    const form = document.getElementById("public-detection-form");
+    if (!form) return;
+
+    const fileInput = document.getElementById("public-leaf-image-input");
+    const cameraTab = document.getElementById("public-camera-tab");
+    const uploadTab = document.getElementById("public-upload-tab");
+    const video = document.getElementById("public-camera-preview");
+    const canvas = document.getElementById("public-camera-canvas");
+    const capturedInput = document.getElementById("public-captured-image-data");
+    const capturedPreview = document.getElementById("public-captured-preview");
+    const startButton = document.getElementById("public-start-camera-btn");
+    const captureButton = document.getElementById("public-capture-photo-btn");
+    let stream = null;
+
+    async function startCamera() {
+        if (!navigator.mediaDevices?.getUserMedia) {
+            window.alert("या ब्राउझरमध्ये कॅमेरा सुविधा उपलब्ध नाही.");
+            return;
+        }
+
+        if (stream || startButton?.disabled) return;
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+            video.srcObject = stream;
+            captureButton.disabled = false;
+            startButton.textContent = "कॅमेरा तयार आहे";
+            startButton.disabled = true;
+        } catch (error) {
+            window.alert("कॅमेरा सुरू करता आला नाही. कृपया image upload वापरा.");
+        }
+    }
+
+    function stopCamera() {
+        if (!stream) return;
+        for (const track of stream.getTracks()) {
+            track.stop();
+        }
+        stream = null;
+        video.srcObject = null;
+        captureButton.disabled = true;
+        startButton.textContent = "कॅमेरा सुरू करा";
+        startButton.disabled = false;
+    }
+
+    startButton?.addEventListener("click", startCamera);
+
+    captureButton?.addEventListener("click", () => {
+        if (!stream) return;
+
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 960;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        capturedInput.value = dataUrl;
+        capturedPreview.src = dataUrl;
+        capturedPreview.classList.remove("d-none");
+        if (fileInput) fileInput.value = "";
+        stopCamera();
+    });
+
+    uploadTab?.addEventListener("shown.bs.tab", stopCamera);
+    cameraTab?.addEventListener("shown.bs.tab", startCamera);
+
+    fileInput?.addEventListener("change", () => {
+        if (fileInput.files?.length) {
+            capturedInput.value = "";
+            capturedPreview.classList.add("d-none");
+            capturedPreview.removeAttribute("src");
+        }
+    });
+
+    form.addEventListener("submit", (event) => {
+        const hasFile = Boolean(fileInput?.files?.length);
+        const hasCapture = Boolean(capturedInput.value);
+        if (!hasFile && !hasCapture) {
+            event.preventDefault();
+            window.alert("कृपया फोटो अपलोड करा किंवा कॅमेरातून फोटो घ्या.");
+        }
+    });
+
+    window.addEventListener("beforeunload", stopCamera);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% block title %}डेटासेट व्यवस्थापन{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
+                    <div>
+                        <h1 class="h5 mb-1">PlantVillage सीड डेटासेट आयात करा</h1>
+                        <p class="text-muted small mb-0">जर `dataset/seed` मध्ये आधीच फोटो असतील तर त्यांना प्रथम डेटाबेसमध्ये सिंक करा.</p>
+                    </div>
+                    <button class="btn btn-outline-success btn-sm" type="button" data-sync-seed-dataset>सीड सिंक करा</button>
+                </div>
+                <form id="plantvillage-import-form">
+                    <div class="mb-3">
+                        <label class="form-label">स्रोत फोल्डर</label>
+                        <input class="form-control" name="source_dir" placeholder="D:\datasets\PlantVillage">
+                    </div>
+                    <button class="btn btn-success w-100" type="submit">PlantVillage आयात करा</button>
+                </form>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">कस्टम फील्ड फोटो अपलोड करा</h2>
+                <form method="post" action="{{ url_for('admin.upload_dataset_image') }}" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label class="form-label">पीक</label>
+                        <select class="form-select" name="plant_id" id="dataset-plant-select" required>
+                            {% for plant in plants %}
+                                <option value="{{ plant.PlantID }}">{{ plant.PlantName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">रोग</label>
+                        <select class="form-select" name="disease_id" required>
+                            {% for disease in diseases %}
+                                <option value="{{ disease.DiseaseID }}">{{ disease.PlantName }} / {{ disease.DiseaseName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">फोटो</label>
+                        <input class="form-control" name="dataset_image" type="file" accept="image/*" required>
+                    </div>
+                    <button class="btn btn-outline-success w-100">फोटो अपलोड करा</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="h5 mb-0">डेटासेट सारांश</h2>
+                    <button class="btn btn-success" data-generate-dataset>ट्रेनिंग डेटासेट तयार करा</button>
+                </div>
+                <div class="row g-3">
+                    <div class="col-md-6"><div class="stat-card"><div class="label">एकूण डेटासेट फोटो</div><div class="value">{{ statistics.total_images }}</div></div></div>
+                    <div class="col-md-6"><div class="stat-card"><div class="label">कस्टम अपलोड फोटो</div><div class="value">{{ statistics.custom_images }}</div></div></div>
+                </div>
+                {% if sync_result and sync_result.synced %}
+                    <p class="text-success small mt-3 mb-0">सीड डेटासेट डिस्कवरून आपोआप सिंक झाले असून आता प्रणालीमध्ये उपलब्ध आहे.</p>
+                {% endif %}
+                <div class="table-responsive mt-3">
+                    <table class="table table-striped">
+                        <thead><tr><th>पीक</th><th>रोग</th><th>फोटो</th></tr></thead>
+                        <tbody>
+                            {% for item in statistics.classes %}
+                                <tr><td>{{ item.PlantName }}</td><td>{{ item.DiseaseName }}</td><td>{{ item.image_count }}</td></tr>
+                            {% else %}
+                                <tr><td colspan="3" class="text-center text-muted">कोणतेही डेटासेट फोटो सापडले नाहीत.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">अलीकडील डेटासेट फोटो</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead><tr><th>पीक</th><th>रोग</th><th>स्रोत</th><th>पाथ</th><th>हटवा</th></tr></thead>
+                        <tbody>
+                            {% for image in statistics.images %}
+                                <tr>
+                                    <td>{{ image.PlantName }}</td>
+                                    <td>{{ image.DiseaseName }}</td>
+                                    <td>{{ image.SourceType }}</td>
+                                    <td class="small">{{ image.ImagePath }}</td>
+                                    <td><button class="btn btn-sm btn-danger" data-delete-url="{{ url_for('admin.delete_dataset_image', image_id=image.ImageID) }}">हटवा</button></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="5" class="text-center text-muted">कोणतेही डेटासेट फोटो साठवलेले नाहीत.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

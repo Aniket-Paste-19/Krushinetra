@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}शेतकरी डॅशबोर्ड{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">शेतकरी डॅशबोर्ड</h1>
+        <p class="text-muted mb-0">तुमचे शोध पाहा आणि नवीन पानांचे फोटो अपलोड करा.</p>
+    </div>
+    <a class="btn btn-success" href="{{ url_for('farmer.predict_page') }}">नवीन तपासणी</a>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="label">एकूण शोध</div><div class="value">{{ activity.total_searches }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">एकूण तपासण्या</div><div class="value">{{ activity.total_detections }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">सर्वाधिक शोधलेले पीक</div><div class="value">{{ activity.most_searched_plant.PlantName if activity.most_searched_plant else 'उपलब्ध नाही' }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">सर्वाधिक आढळलेला रोग</div><div class="value">{{ activity.most_detected_disease.DiseaseName if activity.most_detected_disease else 'उपलब्ध नाही' }}</div></div></div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">अलीकडील शोध इतिहास</h2>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead><tr><th>तारीख</th><th>पीक</th><th>रोग</th><th>विश्वास</th><th>मॉडेल</th></tr></thead>
+                <tbody>
+                    {% for item in recent_history %}
+                        <tr>
+                            <td>{{ item.SearchDate }}</td>
+                            <td>{{ item.PlantName }}</td>
+                            <td>{{ item.DiseaseName }}</td>
+                            <td>{{ '%.2f'|format(item.PredictionConfidence * 100) }}%</td>
+                            <td>{{ item.ModelVersion or 'ट्रेनिंग नाही' }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="5" class="text-center text-muted">अजून कोणतीही तपासणी उपलब्ध नाही.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

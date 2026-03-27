@@ -1,0 +1,169 @@
+{% extends 'base.html' %}
+{% block title %}पान तपासणी{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">पिकाच्या पानाचा फोटो अपलोड करा</h1>
+                <form method="post" enctype="multipart/form-data" id="leaf-detection-form">
+                    <div class="mb-3">
+                        <label class="form-label">पीक प्रकार</label>
+                        <select class="form-select" name="plant_id">
+                            <option value="">मॉडेलवरून आपोआप ओळखा</option>
+                            {% for plant in plants %}
+                                <option value="{{ plant.PlantID }}">{{ plant.PlantName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <ul class="nav nav-pills nav-fill mb-3" id="capture-options" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="upload-tab" data-bs-toggle="pill" data-bs-target="#upload-pane" type="button" role="tab" aria-controls="upload-pane" aria-selected="true">फोटो अपलोड करा</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="camera-tab" data-bs-toggle="pill" data-bs-target="#camera-pane" type="button" role="tab" aria-controls="camera-pane" aria-selected="false">कॅमेरा वापरा</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mb-3">
+                        <div class="tab-pane fade show active" id="upload-pane" role="tabpanel" aria-labelledby="upload-tab" tabindex="0">
+                            <label class="form-label">पानाचा फोटो</label>
+                            <input class="form-control" type="file" id="leaf-image-input" name="leaf_image" accept="image/*" capture="environment">
+                            <div class="form-text">गॅलरीतील फोटो निवडा किंवा मोबाइलवरून थेट कॅमेरा उघडा.</div>
+                        </div>
+                        <div class="tab-pane fade" id="camera-pane" role="tabpanel" aria-labelledby="camera-tab" tabindex="0">
+                            <p class="text-muted small mb-2">कॅमेरा सुविधा `localhost` किंवा HTTPS वर चालणाऱ्या समर्थित ब्राउझरमध्ये काम करते.</p>
+                            <div class="ratio ratio-4x3 rounded overflow-hidden bg-dark mb-3">
+                                <video id="camera-preview" class="w-100 h-100 object-fit-cover" autoplay playsinline muted></video>
+                            </div>
+                            <canvas id="camera-canvas" class="d-none"></canvas>
+                            <input type="hidden" name="captured_image_data" id="captured-image-data">
+                            <div class="d-flex gap-2 mb-3">
+                                <button class="btn btn-outline-success flex-fill" type="button" id="start-camera-btn">कॅमेरा सुरू करा</button>
+                                <button class="btn btn-success flex-fill" type="button" id="capture-photo-btn" disabled>फोटो घ्या</button>
+                            </div>
+                            <img id="captured-preview" class="img-fluid rounded border d-none" alt="कॅप्चर केलेल्या पानाचा प्रिव्ह्यू">
+                            <div class="form-text mt-2">फोटो घेतल्यावर तो तपासणीसाठी आपोआप जोडला जाईल.</div>
+                        </div>
+                    </div>
+                    <button class="btn btn-success w-100">रोग तपासा</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h4 mb-3">तपासणी निकाल</h2>
+                {% if result %}
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">पीकाचे नाव</dt><dd class="col-sm-8">{{ result.plant_name }}</dd>
+                        <dt class="col-sm-4">रोगाचे नाव</dt><dd class="col-sm-8">{{ result.disease_name }}</dd>
+                        <dt class="col-sm-4">विश्वास टक्केवारी</dt><dd class="col-sm-8">{{ result.confidence_score }}%</dd>
+                        <dt class="col-sm-4">लक्षणे</dt><dd class="col-sm-8">{{ result.symptoms or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">उपचार</dt><dd class="col-sm-8">{{ result.treatment or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">पूरक औषध</dt><dd class="col-sm-8">{{ result.supplement or 'उपलब्ध नाही' }}</dd>
+                        <dt class="col-sm-4">मॉडेल आवृत्ती</dt><dd class="col-sm-8">{{ result.model_version }}</dd>
+                    </dl>
+                {% else %}
+                    <p class="text-muted mb-0">पानाचा फोटो अपलोड करा आणि रोग तपासणीसह उपचार मार्गदर्शन मिळवा.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(() => {
+    const form = document.getElementById("leaf-detection-form");
+    if (!form) return;
+
+    const fileInput = document.getElementById("leaf-image-input");
+    const cameraTab = document.getElementById("camera-tab");
+    const uploadTab = document.getElementById("upload-tab");
+    const video = document.getElementById("camera-preview");
+    const canvas = document.getElementById("camera-canvas");
+    const capturedInput = document.getElementById("captured-image-data");
+    const capturedPreview = document.getElementById("captured-preview");
+    const startButton = document.getElementById("start-camera-btn");
+    const captureButton = document.getElementById("capture-photo-btn");
+    let stream = null;
+
+    async function startCamera() {
+        if (!navigator.mediaDevices?.getUserMedia) {
+            window.alert("या ब्राउझरमध्ये कॅमेरा सुविधा उपलब्ध नाही.");
+            return;
+        }
+
+        if (stream) return;
+
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({
+                video: { facingMode: { ideal: "environment" } },
+                audio: false
+            });
+            video.srcObject = stream;
+            captureButton.disabled = false;
+            startButton.textContent = "कॅमेरा तयार आहे";
+            startButton.disabled = true;
+        } catch (error) {
+            window.alert("कॅमेरा सुरू करता आला नाही. कृपया परवानगी द्या किंवा फोटो अपलोड करा.");
+        }
+    }
+
+    function stopCamera() {
+        if (!stream) return;
+        for (const track of stream.getTracks()) {
+            track.stop();
+        }
+        stream = null;
+        video.srcObject = null;
+        captureButton.disabled = true;
+        startButton.textContent = "कॅमेरा सुरू करा";
+        startButton.disabled = false;
+    }
+
+    startButton?.addEventListener("click", startCamera);
+
+    captureButton?.addEventListener("click", () => {
+        if (!stream) return;
+
+        canvas.width = video.videoWidth || 1280;
+        canvas.height = video.videoHeight || 960;
+        const context = canvas.getContext("2d");
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.92);
+        capturedInput.value = dataUrl;
+        capturedPreview.src = dataUrl;
+        capturedPreview.classList.remove("d-none");
+        if (fileInput) fileInput.value = "";
+        stopCamera();
+    });
+
+    uploadTab?.addEventListener("shown.bs.tab", stopCamera);
+    cameraTab?.addEventListener("shown.bs.tab", startCamera);
+
+    fileInput?.addEventListener("change", () => {
+        if (fileInput.files?.length) {
+            capturedInput.value = "";
+            capturedPreview.classList.add("d-none");
+            capturedPreview.removeAttribute("src");
+        }
+    });
+
+    form.addEventListener("submit", (event) => {
+        const hasFile = Boolean(fileInput?.files?.length);
+        const hasCapture = Boolean(capturedInput.value);
+        if (!hasFile && !hasCapture) {
+            event.preventDefault();
+            window.alert("फोटो अपलोड करा किंवा कॅमेरातून फोटो घ्या.");
+        }
+    });
+
+    window.addEventListener("beforeunload", stopCamera);
+})();
+</script>
+{% endblock %}

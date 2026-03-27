@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% block title %}रोग व्यवस्थापन{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h5">रोग जोडा</h1>
+                <form method="post" action="{{ url_for('admin.add_disease') }}">
+                    <div class="mb-3">
+                        <label class="form-label">पीक</label>
+                        <select class="form-select" name="plant_id" required>
+                            {% for plant in plants %}
+                                <option value="{{ plant.PlantID }}">{{ plant.PlantName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3"><label class="form-label">रोगाचे नाव</label><input class="form-control" name="disease_name" required></div>
+                    <div class="mb-3"><label class="form-label">लक्षणे</label><textarea class="form-control" name="symptoms" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">उपचार</label><textarea class="form-control" name="treatment" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">पूरक औषध / कीटकनाशक</label><textarea class="form-control" name="supplement" rows="2"></textarea></div>
+                    <div class="mb-3"><label class="form-label">टीप</label><textarea class="form-control" name="notes" rows="2"></textarea></div>
+                    <button class="btn btn-success w-100">रोग जोडा</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">रोगांची यादी</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead><tr><th>पीक</th><th>रोग</th><th>लक्षणे</th><th>उपचार</th><th>पूरक औषध</th><th>संपादन</th><th>हटवा</th></tr></thead>
+                        <tbody>
+                            {% for disease in diseases %}
+                                <tr>
+                                    <td>{{ disease.PlantName }}</td>
+                                    <td>{{ disease.DiseaseName }}</td>
+                                    <td>{{ disease.Symptoms or 'उपलब्ध नाही' }}</td>
+                                    <td>{{ disease.Treatment or 'उपलब्ध नाही' }}</td>
+                                    <td>{{ disease.Supplement or 'उपलब्ध नाही' }}</td>
+                                    <td><button class="btn btn-sm btn-outline-primary" data-edit-disease='{{ {"id": disease.DiseaseID, "plant_id": disease.PlantID, "name": disease.DiseaseName, "symptoms": disease.Symptoms or "", "treatment": disease.Treatment or "", "supplement": disease.Supplement or "", "notes": disease.Notes or ""} | tojson }}'>संपादन</button></td>
+                                    <td><button class="btn btn-sm btn-danger" data-delete-url="{{ url_for('admin.delete_disease', disease_id=disease.DiseaseID) }}">हटवा</button></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="7" class="text-center text-muted">कोणतेही रोग उपलब्ध नाहीत.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editDiseaseModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title h5 mb-0">रोग संपादित करा</h2>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="edit-disease-form">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label" for="edit-disease-plant">पीक</label>
+                        <select class="form-select" id="edit-disease-plant" name="plant_id" required>
+                            {% for plant in plants %}
+                                <option value="{{ plant.PlantID }}">{{ plant.PlantName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="edit-disease-name">रोगाचे नाव</label>
+                        <input class="form-control" id="edit-disease-name" name="disease_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="edit-disease-symptoms">लक्षणे</label>
+                        <textarea class="form-control" id="edit-disease-symptoms" name="symptoms" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="edit-disease-treatment">उपचार</label>
+                        <textarea class="form-control" id="edit-disease-treatment" name="treatment" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="edit-disease-supplement">पूरक औषध / कीटकनाशक</label>
+                        <textarea class="form-control" id="edit-disease-supplement" name="supplement" rows="3"></textarea>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label" for="edit-disease-notes">टीप</label>
+                        <textarea class="form-control" id="edit-disease-notes" name="notes" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">रद्द करा</button>
+                    <button type="submit" class="btn btn-success">रोग अपडेट करा</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

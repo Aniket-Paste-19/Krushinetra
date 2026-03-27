@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% block title %}आकडेवारी{% endblock %}
+{% block content %}
+<div class="mb-4">
+    <h1 class="h4 mb-1">आकडेवारी आणि विश्लेषण</h1>
+    <p class="text-muted mb-0">रोग शोध, पीक वापर आणि मॉडेल आवृत्ती वापराचा मागोवा.</p>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">तारीखनुसार रोग तपासणी</h2>
+                <div class="chart-panel">
+                    <canvas id="diseaseFrequencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">पीकनिहाय वापर</h2>
+                <div class="chart-panel">
+                    <canvas id="plantUsageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">मॉडेल आवृत्तीनुसार तपासण्या</h2>
+                <div class="chart-panel">
+                    <canvas id="modelUsageChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">सर्वाधिक वापर करणारे शेतकरी</h2>
+                <div class="chart-panel">
+                    <canvas id="topFarmersChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script id="statistics-payload" type="application/json">{{ chart_data | tojson }}</script>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/statistics.js') }}"></script>
+{% endblock %}

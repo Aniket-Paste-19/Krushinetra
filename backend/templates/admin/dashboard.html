@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block title %}ॲडमिन डॅशबोर्ड{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 mb-1">ॲडमिन डॅशबोर्ड</h1>
+        <p class="text-muted mb-0">शेतकरी, डेटासेट, तपासण्या आणि मॉडेल स्थितीचा आढावा.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-success" data-generate-dataset>ट्रेनिंग डेटासेट तयार करा</button>
+        <button class="btn btn-success" data-start-training>एआय मॉडेल तयार करा</button>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="stat-card"><div class="label">शेतकरी</div><div class="value">{{ summary.total_farmers }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">पिके</div><div class="value">{{ summary.total_plants }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">रोग</div><div class="value">{{ summary.total_diseases }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">शोध</div><div class="value">{{ summary.total_searches }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">डेटासेट प्रतिमा</div><div class="value">{{ summary.total_dataset_images }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">कस्टम प्रतिमा</div><div class="value">{{ summary.total_custom_images }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">मॉडेल स्थिती</div><div class="value">{{ summary.model_metadata.status or 'ट्रेनिंग नाही' }}</div></div></div>
+    <div class="col-md-3"><div class="stat-card"><div class="label">मॉडेल आवृत्ती</div><div class="value">{{ summary.model_metadata.model_version or 'ट्रेनिंग नाही' }}</div></div></div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">सर्वाधिक आढळलेले रोग</h2>
+                <ul class="list-group list-group-flush">
+                    {% for item in summary.top_diseases %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ item.PlantName }} / {{ item.DiseaseName }}</span>
+                            <strong>{{ item.total }}</strong>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">अजून कोणतीही तपासणी नोंदलेली नाही.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body">
+                <h2 class="h5">सर्वाधिक सक्रिय शेतकरी</h2>
+                <ul class="list-group list-group-flush">
+                    {% for item in summary.active_farmers %}
+                        <li class="list-group-item d-flex justify-content-between">
+                            <span>{{ item.Name }}<span class="text-muted"> ({{ item.Email }})</span></span>
+                            <strong>{{ item.total }}</strong>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item text-muted">अजून शेतकरी क्रियाकलाप उपलब्ध नाही.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="mt-4 card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">ट्रेनिंग सारांश</h2>
+        {% if summary.latest_training %}
+            <div class="row">
+                <div class="col-md-4"><strong>शेवटची ट्रेनिंग तारीख:</strong> {{ summary.latest_training.TrainingDate }}</div>
+                <div class="col-md-4"><strong>अचूकता:</strong> {{ '%.2f'|format(summary.latest_training.Accuracy * 100) }}%</div>
+                <div class="col-md-4"><strong>डेटासेट वर्ग संख्या:</strong> {{ summary.model_metadata.class_count or 0 }}</div>
+            </div>
+        {% else %}
+            <p class="text-muted mb-0">अजून कोणतीही ट्रेनिंग पूर्ण झालेली नाही.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

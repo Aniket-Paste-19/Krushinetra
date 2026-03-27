@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}ट्रेनिंग व्यवस्थापन{% endblock %}
+{% block content %}
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <h1 class="h4 mb-1">ट्रेनिंग व्यवस्थापन</h1>
+                <p class="text-muted mb-0">मर्ज केलेल्या सीड आणि कस्टम डेटासेटवरून एका क्लिकमध्ये मॉडेल तयार करा.</p>
+            </div>
+            <button class="btn btn-success" data-start-training>एआय मॉडेल तयार करा</button>
+        </div>
+        <div class="mt-3 p-3 bg-light rounded border">
+            <div class="fw-semibold">सध्याची स्थिती</div>
+            <pre id="training-status-box" class="mb-0 small">{{ status | tojson(indent=2) }}</pre>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h2 class="h5">ट्रेनिंग रन</h2>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead><tr><th>आवृत्ती</th><th>तारीख</th><th>डेटासेट</th><th>अचूकता</th><th>लॉस</th><th>मॉडेल पाथ</th></tr></thead>
+                <tbody>
+                    {% for run in runs %}
+                        <tr>
+                            <td>{{ run.ModelVersion }}</td>
+                            <td>{{ run.TrainingDate }}</td>
+                            <td>{{ run.DatasetImageCount }} ({{ run.TrainCount }}/{{ run.ValCount }}/{{ run.TestCount }})</td>
+                            <td>{{ '%.2f'|format((run.Accuracy or 0) * 100) }}%</td>
+                            <td>{{ '%.4f'|format(run.Loss or 0) }}</td>
+                            <td class="small">{{ run.ModelPath }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="text-center text-muted">कोणतेही ट्रेनिंग रन उपलब्ध नाहीत.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

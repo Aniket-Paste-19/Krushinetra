@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}पीक व्यवस्थापन{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h5">पीक जोडा</h1>
+                <form method="post" action="{{ url_for('admin.add_plant') }}">
+                    <div class="mb-3">
+                        <label class="form-label">पीकाचे नाव</label>
+                        <input class="form-control" name="plant_name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">वर्णन</label>
+                        <textarea class="form-control" name="description" rows="4"></textarea>
+                    </div>
+                    <button class="btn btn-success w-100">पीक जोडा</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">उपलब्ध पिके</h2>
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead><tr><th>पीकाचे नाव</th><th>वर्णन</th><th>संपादन</th><th>हटवा</th></tr></thead>
+                        <tbody>
+                            {% for plant in plants %}
+                                <tr>
+                                    <td>{{ plant.PlantName }}</td>
+                                    <td>{{ plant.Description or 'उपलब्ध नाही' }}</td>
+                                    <td><button class="btn btn-sm btn-outline-primary" data-edit-plant='{{ {"id": plant.PlantID, "name": plant.PlantName, "description": plant.Description or ""} | tojson }}'>संपादन</button></td>
+                                    <td><button class="btn btn-sm btn-danger" data-delete-url="{{ url_for('admin.delete_plant', plant_id=plant.PlantID) }}">हटवा</button></td>
+                                </tr>
+                            {% else %}
+                                <tr><td colspan="4" class="text-center text-muted">कोणतेही पीक उपलब्ध नाही.</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

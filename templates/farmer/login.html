@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}शेतकरी लॉगिन{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h2 class="h4 mb-3">शेतकरी लॉगिन</h2>
+                <form method="post">
+                    <div class="mb-3">
+                        <label class="form-label">ईमेल</label>
+                        <input class="form-control" name="email" type="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">पासवर्ड</label>
+                        <input class="form-control" name="password" type="password" required>
+                    </div>
+                    <button class="btn btn-success w-100">लॉगिन</button>
+                </form>
+                <div class="small text-muted mt-3">
+                    अॅडमिन लॉगिन नेव्हिगेशन बारमधून उपलब्ध आहे.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

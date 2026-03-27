@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}तपासणी इतिहास{% endblock %}
+{% block content %}
+<div class="card shadow-sm">
+    <div class="card-body">
+        <h1 class="h4 mb-3">तपासणी इतिहास</h1>
+        <div class="table-responsive">
+            <table class="table table-striped align-middle">
+                <thead><tr><th>तारीख</th><th>पीक</th><th>रोग</th><th>विश्वास</th><th>मॉडेल</th><th>स्रोत</th></tr></thead>
+                <tbody>
+                    {% for item in history %}
+                        <tr>
+                            <td>{{ item.SearchDate }}</td>
+                            <td>{{ item.PlantName }}</td>
+                            <td>{{ item.DiseaseName }}</td>
+                            <td>{{ '%.2f'|format(item.PredictionConfidence * 100) }}%</td>
+                            <td>{{ item.ModelVersion or 'ट्रेनिंग नाही' }}</td>
+                            <td>{{ item.SourceType }}</td>
+                        </tr>
+                    {% else %}
+                        <tr><td colspan="6" class="text-center text-muted">इतिहास उपलब्ध नाही.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

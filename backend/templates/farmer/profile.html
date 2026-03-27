@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}शेतकरी प्रोफाइल{% endblock %}
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">प्रोफाइल</h1>
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">नाव</dt><dd class="col-sm-8">{{ farmer.Name }}</dd>
+                    <dt class="col-sm-4">ईमेल</dt><dd class="col-sm-8">{{ farmer.Email }}</dd>
+                    <dt class="col-sm-4">फोन</dt><dd class="col-sm-8">{{ farmer.Phone or 'उपलब्ध नाही' }}</dd>
+                    <dt class="col-sm-4">स्थिती</dt><dd class="col-sm-8">{{ farmer.Status }}</dd>
+                    <dt class="col-sm-4">शेवटचे लॉगिन</dt><dd class="col-sm-8">{{ farmer.LastLogin or 'उपलब्ध नाही' }}</dd>
+                </dl>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h4 mb-3">क्रियाकलाप सारांश</h2>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between"><span>एकूण शोध</span><strong>{{ activity.total_searches }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>एकूण तपासण्या</span><strong>{{ activity.total_detections }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>सर्वाधिक शोधलेले पीक</span><strong>{{ activity.most_searched_plant.PlantName if activity.most_searched_plant else 'उपलब्ध नाही' }}</strong></li>
+                    <li class="list-group-item d-flex justify-content-between"><span>सर्वाधिक आढळलेला रोग</span><strong>{{ activity.most_detected_disease.DiseaseName if activity.most_detected_disease else 'उपलब्ध नाही' }}</strong></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
