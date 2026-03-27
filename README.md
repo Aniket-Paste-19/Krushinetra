@@ -1,0 +1,2 @@
+# Krushinetra
+Crop Disease Detection
